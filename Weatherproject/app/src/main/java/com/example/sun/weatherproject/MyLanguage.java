@@ -42,7 +42,7 @@ public class MyLanguage extends IntentService {
     public MyLanguage() { super("MyLanguage");}
 
     public void urlConnection(String lang) throws IOException{
-        URL url = new URL("https://translate.yandex.net/api/v1.5/tr/getLangs?trnsl.1.1.20141008T184207Z.282734f58fd648f2.c285f1cef2fb775e156107ca011b94bfdec084c8&text=make&lang="+lang);
+        URL url = new URL("https://translate.yandex.net/api/v1.5/tr.json/translate?key=trnsl.1.1.20141009T140242Z.a5cbba1e79293f2b.e621f39f66ae2b18ef9a71c2e8d69b543234bd50&text=make&lang=ru");
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setRequestMethod("GET");
         connection.connect();

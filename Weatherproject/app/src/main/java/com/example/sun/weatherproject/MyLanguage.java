@@ -24,6 +24,8 @@ import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.HttpContext;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.xmlpull.v1.XmlPullParserFactory;
 
 import java.io.BufferedReader;
@@ -42,7 +44,7 @@ public class MyLanguage extends IntentService {
     public MyLanguage() { super("MyLanguage");}
 
     public void urlConnection(String lang) throws IOException{
-        URL url = new URL("https://translate.yandex.net/api/v1.5/tr.json/translate?key=trnsl.1.1.20141009T140242Z.a5cbba1e79293f2b.e621f39f66ae2b18ef9a71c2e8d69b543234bd50&text=make&lang=ru");
+        URL url = new URL("https://translate.yandex.net/api/v1.5/tr.json/translate?key=trnsl.1.1.20141009T140242Z.a5cbba1e79293f2b.e621f39f66ae2b18ef9a71c2e8d69b543234bd50&text=make&lang="+lang);
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setRequestMethod("GET");
         connection.connect();
@@ -74,6 +76,22 @@ public class MyLanguage extends IntentService {
 
         String dataString = text.toString();
         Log.v("",dataString);
+
+        String dataCodedString = new String(dataString.getBytes("UTF-8"));
+        try {
+            JSONObject jsonObject = new JSONObject(dataCodedString);
+            dataCodedString = jsonObject.getString("text");
+            int size = dataCodedString.length()-2;
+            dataCodedString = dataCodedString.substring(2,size);
+            Log.v("",dataCodedString);
+            Log.v("", "SEND TO BROADCAST");
+            Intent intent = new Intent(MyWeather.Receiver.ACTION);
+            intent.putExtra("text", dataCodedString);
+            sendBroadcast(intent);
+
+        } catch (JSONException e) {
+            e.getCause();
+            }
         //return text.toString();
 
         //while (reader.readLine() != null)

@@ -1,26 +1,25 @@
 package com.example.sun.weatherproject;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.*;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
-import com.example.sun.weatherproject.MyLanguage;
+
 import java.util.ArrayList;
 
 /**
@@ -45,14 +44,33 @@ public class MyWeather extends Activity {
             @Override
             public void onClick(View v) {
                 //по событию онклик явный запуск сервиса
-               Intent intent = new Intent(MyWeather.this, MyLanguage.class);
-               intent.putExtra(MyLanguage.LANGUAGE, "ru");
-               startService(intent);
+               Intent intent = new Intent(MyWeather.this, FragmentsActivity.class);
+               //intent.putExtra(MyLanguage.LANGUAGE, "ru");
+               startActivity(intent);
             }
         });
 
+        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                switch (i){
+                    case 0: Intent intentRu = new Intent(MyWeather.this, MyLanguage.class);
+                        intentRu.putExtra(MyLanguage.LANGUAGE, "ru");
+                        startService(intentRu); break;
+                    case 1: Intent intentEn = new Intent(MyWeather.this, MyLanguage.class);
+                        intentEn.putExtra(MyLanguage.LANGUAGE, "en");
+                        startService(intentEn); break;
+                    case 2: Intent intentFr = new Intent(MyWeather.this, MyLanguage.class);
+                        intentFr.putExtra(MyLanguage.LANGUAGE, "fr");
+                        startService(intentFr); break;
+                    default: Intent intentDe = new Intent(MyWeather.this, MyLanguage.class);
+                        intentDe.putExtra(MyLanguage.LANGUAGE, "de");
+                        startService(intentDe); break;
+                }
+            }
+        });
         IntentFilter filter = new IntentFilter(Receiver.ACTION);
-        filter.addCategory(Intent.CATEGORY_DEFAULT);
+        //filter.addCategory(Intent.CATEGORY_DEFAULT);
         receiver = new Receiver();
         registerReceiver(receiver,filter);
     }
@@ -74,14 +92,14 @@ public class MyWeather extends Activity {
     }
 
     public class Receiver extends BroadcastReceiver{
-        public static final String LANGUAGE = "lang";
+        public static final String LANGUAGE = "text";
         public static final String ACTION = "lang.received";
         @Override
         public void onReceive(Context context, Intent intent){
             //реакция на полученное намерение
             String language = intent.getStringExtra(LANGUAGE);
             myEditText.setText(language);
-            createNotification();
+            //createNotification();
         }
     }
 
@@ -90,9 +108,10 @@ public class MyWeather extends Activity {
         private Context context;
         public MyAdapter( Context cont ) {
             this.context = cont;
+            cities.add("Русский");
             cities.add("Английский");
-            cities.add("Немецкий");
             cities.add("Французский");
+            cities.add("Немецкий");
         }
         @Override
         public int getCount() {
